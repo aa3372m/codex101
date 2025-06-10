@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}New Lesson{% endblock %}
+{% block content %}
+<h1>New Lesson</h1>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.title.label(class="form-label") }}
+    {{ form.title(class="form-control") }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Select Cards</label>
+    <ul id="card-list" class="list-group">
+    {% for card in cards %}
+      <li class="list-group-item">
+        <input class="form-check-input me-1" type="checkbox" name="cards" value="{{ card.id }}" id="card{{ card.id }}"
+               {% if card.id in selected %}checked{% endif %}>
+        <label class="form-check-label" for="card{{ card.id }}">{{ card.front_text }}</label>
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+  {{ form.order(id='order-field') }}
+  {{ form.submit(class="btn btn-primary") }}
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  const list = document.getElementById('card-list');
+  list.addEventListener('dragstart', e => { e.target.classList.add('dragging'); });
+  list.addEventListener('dragend', e => { e.target.classList.remove('dragging'); updateOrder(); });
+  list.querySelectorAll('li').forEach(li => { li.draggable = true; });
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    const dragging = document.querySelector('.dragging');
+    const after = Array.from(list.children).find(child => child !== dragging && e.clientY <= child.getBoundingClientRect().top + child.offsetHeight/2);
+    if(after==null) list.appendChild(dragging); else list.insertBefore(dragging, after);
+  });
+  function updateOrder(){
+    const ids = Array.from(list.children).map(li => li.querySelector('input').value);
+    document.getElementById('order-field').value = ids.join(',');
+  }
+  updateOrder();
+</script>
+{% endblock %}

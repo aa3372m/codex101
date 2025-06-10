@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Lessons{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-2">
+  <h1>Lessons</h1>
+  <a class="btn btn-primary" href="{{ url_for('lesson_new') }}">New Lesson</a>
+</div>
+<table class="table">
+<thead><tr><th>Title</th><th>Created</th><th></th></tr></thead>
+<tbody>
+{% for lesson in lessons %}
+<tr>
+  <td>{{ lesson.title }}</td>
+  <td>{{ lesson.created_at.strftime('%Y-%m-%d') }}</td>
+  <td>
+    <a class="btn btn-sm btn-success" href="{{ url_for('run_lesson', id=lesson.id) }}">Run</a>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

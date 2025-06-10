@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Run Lesson{% endblock %}
+{% block content %}
+<h1>{{ lesson.title }}</h1>
+<div class="card mb-3" id="flashcard">
+  <div class="card-body">
+    <div id="front">{{ card.front_text }}</div>
+    <div id="back" class="d-none">{{ card.back_text }}</div>
+  </div>
+</div>
+<form method="post" id="score-form">
+  {{ form.hidden_tag() }}
+  {{ form.card_id(value=card.id) }}
+  {{ form.score(id='score-field') }}
+  <div class="btn-group" role="group">
+    {% for i in range(1,6) %}
+      <button type="button" class="btn btn-outline-primary" onclick="rate({{ i }})">{{ i }}</button>
+    {% endfor %}
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+const cardEl=document.getElementById('flashcard');
+const front=document.getElementById('front');
+const back=document.getElementById('back');
+cardEl.addEventListener('click',()=>{front.classList.toggle('d-none');back.classList.toggle('d-none');cardEl.classList.toggle('flipped');});
+function rate(v){document.getElementById('score-field').value=v;document.getElementById('score-form').submit();}
+</script>
+{% endblock %}
